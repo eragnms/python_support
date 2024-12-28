@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python_support"
-version = "0.1.1"
+version = "0.1.2"
 description = "Reusable Python modules for various projects."
 readme = "README.md"
 license = { text = "MIT" }

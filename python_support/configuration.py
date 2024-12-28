@@ -1,14 +1,12 @@
 import configparser
 from os import environ
 
-ENV_VAR = "MY_CONFIG"
-
 
 class MyConfig:
     """Class to handle our configuration file.
 
     The configuration file name is defined in the environment variable
-    <ENV_VAR>.
+    <env_var>.
 
     Configuration file format:
     [SECTION]
@@ -21,12 +19,12 @@ class MyConfig:
     print(config.section_key)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, env_var: str) -> None:
         self._config = configparser.ConfigParser()
 
-        if ENV_VAR not in environ:
-            raise ValueError(f"Environment variable {ENV_VAR} not set")
-        config_file = str(environ.get(ENV_VAR))
+        if env_var not in environ:
+            raise ValueError(f"Environment variable {env_var} not set")
+        config_file = str(environ.get(env_var))
         self._config.read(config_file)
         self._attributes = {}
 
