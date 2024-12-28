@@ -1,0 +1,24 @@
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 24.10.0
+    hooks:
+    - id: black
+-   repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+    - id: flake8
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.14.0'  # Use the latest MyPy version or specify a specific version
+    hooks:
+    -   id: mypy
+        additional_dependencies: [types-requests, types-setuptools]
+        args: [--config-file=mypy.ini]
+-   repo: https://github.com/timothycrosley/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
+        args: ["--profile", "black"]
+-   repo: https://github.com/jorisroovers/gitlint
+    rev:  v0.19.1
+    hooks:
+    -   id: gitlint

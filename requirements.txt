@@ -1,1 +1,11 @@
 build
+pre-commit
+black
+sphinx
+isort
+mypy
+gitlint
+types-setuptools
+pytest
+debugpy
+setuptools
