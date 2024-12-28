@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python_support"
+version = "0.1.0"
+description = "Reusable Python modules for various projects."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Mats Gustafsson", email = "matsgus71@gmail.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["python_support"]
