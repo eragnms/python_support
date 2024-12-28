@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python_support"
-version = "0.1.0"
+version = "0.1.1"
 description = "Reusable Python modules for various projects."
 readme = "README.md"
 license = { text = "MIT" }
@@ -19,4 +19,4 @@ classifiers = [
 dependencies = []
 
 [tool.setuptools.packages.find]
-where = ["python_support"]
+where = ["."]
