@@ -21,7 +21,7 @@ the [project.dependencies] section:
 
     [project]
     dependencies = [
-        "git+ssh://git@github.com/<your-username>/python_support.git@main"
+        "python_support@git+https://git@github.com/eragnms/python_support.git@main"
     ]
 
 To use for example the configuration module do:
@@ -30,7 +30,74 @@ To use for example the configuration module do:
 
 ## Modules
 
-For more information on the modules see the comments in their source files.
+### MyConfig
 
-- configuration.MyConfig
-- logging.MyLoggin
+This is a module that will read a configuration file on the "INI"
+format and will make it possible to access its settings as attributes.
+
+The configuration file name shall be defined in the environment
+variable "env_var" on the system that runs the application. The "env_var"
+should be passed at initialization of the class MyConfig.
+
+#### Example
+
+Configuration file:
+
+    [SECTION]
+    key = value
+
+Python script:
+
+    from python_support.configuration import MyConfig
+    config = MyConfig("PATH_TO_CONFIG_FILE")
+    print(config.section_key)
+
+### MyLogger
+
+This module will create and configure a logger with console and
+(optional) file logging. If you don't want to log to a file, just
+leave "log_file" empty.
+
+#### Example
+
+The example uses argparse.
+
+In the main file:
+
+    import argparse
+    import logging
+    from python_support.logging import MyLogger
+
+    LOGGER_NAME = "MY_LOGGER"
+    log = logging.getLogger(LOGGER_NAME)
+
+    def main() -> None:
+        parser = argparse.ArgumentParser(
+            description="See README and project documentation for details."
+        )
+        parser.add_argument(
+            "--loglevel",
+            "-l",
+            default="INFO",
+            choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+            help="Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)",
+        )
+        args = parser.parse_args()
+        if args.loglevel:
+            numeric_level = getattr(logging, args.loglevel.upper(), None)
+            if not isinstance(numeric_level, int):
+                raise ValueError("Invalid log level: %s" % args.loglevel)
+            level = numeric_level
+        MyLogger().setup_logger(level, LOGGER_NAME, "/tmp/my_log.log")
+        log.info("This is a INFO log message")
+
+In another file in the same project:
+
+    import logging
+
+    log = logging.getLogger("MY_LOGGER")
+
+
+    class MyClass:
+        def __init__(self):
+            log.debug("This is a DEBUG log message")

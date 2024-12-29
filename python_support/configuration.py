@@ -15,7 +15,7 @@ class MyConfig:
     Values can then be accessed as attributes of the class with the format
     section_key. Example:
 
-    config = MyConfig()
+    config = MyConfig(<env_var>)
     print(config.section_key)
     """
 
