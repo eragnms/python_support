@@ -30,6 +30,14 @@ To use for example the configuration module do:
 
 ## Modules
 
+### PushoverMessage
+
+Will send messages to the Pushover service. Create an account on
+https://pushover.net/ and create an app and take note of its token.
+The user_key (shown once one has logged in at pushover.net) and the
+token shall be given to this class at time of initialization.
+Install the Pushover app on your phone to receive messages on it.
+
 ### MyConfig
 
 This is a module that will read a configuration file on the "INI"

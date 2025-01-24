@@ -8,7 +8,7 @@ repos:
     hooks:
     - id: flake8
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.14.0'  # Use the latest MyPy version or specify a specific version
+    rev: 'v1.14.1'  # Use the latest MyPy version or specify a specific version
     hooks:
     -   id: mypy
         additional_dependencies: [types-requests, types-setuptools]
