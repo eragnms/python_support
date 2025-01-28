@@ -64,7 +64,9 @@ Python script:
 
 This module will create and configure a logger with console and
 (optional) file logging. If you don't want to log to a file, just
-leave "log_file" empty.
+leave "log_file" empty. If "add_timestamp" is set to True when
+the class is initialized then a timestamp will be added to all
+log entries. Default is no timestamps.
 
 #### Example
 
@@ -96,7 +98,7 @@ In the main file:
             if not isinstance(numeric_level, int):
                 raise ValueError("Invalid log level: %s" % args.loglevel)
             level = numeric_level
-        MyLogger().setup_logger(level, LOGGER_NAME, "/tmp/my_log.log")
+        MyLogger(add_timestamp=True).setup_logger(level, LOGGER_NAME, "/tmp/my_log.log")
         log.info("This is a INFO log message")
 
 In another file in the same project:
