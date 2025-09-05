@@ -1,8 +1,20 @@
-"""Setup a nice logger."""
+"""Setup a nice logger with optional systemd journal support."""
+
+from __future__ import annotations
 
 import logging
+from logging.handlers import SysLogHandler
 
 import colorlog  # type: ignore
+
+# Try to use systemd's native journal handler if available.
+try:
+    from systemd.journal import JournalHandler  # type: ignore
+
+    _HAS_JOURNAL = True
+except Exception:
+    JournalHandler = None
+    _HAS_JOURNAL = False
 
 
 class MyLogger:
@@ -17,9 +29,16 @@ class MyLogger:
         self.add_timestamp = add_timestamp
 
     def setup_logger(
-        self, level: int, logger_name: str, log_file: str | None = None
+        self,
+        level: int,
+        logger_name: str,
+        log_file: str | None = None,
+        *,
+        log_to_journal: bool = False,
+        journal_identifier: str | None = None,
     ) -> None:
-        """Create and configure a logger with console and file logging.
+        """Create and configure a logger with console, optional file, and
+        optional journal logging.
 
         Do (at the top of your script):
         import logging
@@ -30,8 +49,12 @@ class MyLogger:
 
         log_file is optional. If you don't want to log to a file, just leave it empty.
 
-        Then you can log messages with:
-        log.debug("This is a debug message")
+        Then (at the beginning of your script):
+        MyLogger(add_timestamp=True).setup_logger(
+            level, logger_name, log_file,
+            log_to_journal=True,
+            journal_identifier="dldp-scan",
+        )
 
         Example using argparse:
 
@@ -67,17 +90,17 @@ class MyLogger:
             format_prefix = ""
             datefmt = None
 
-        # Create a color formatter
+        # Create a color formatter (console)
         if level == logging.DEBUG:
-            text = (
+            console_text = (
                 format_prefix + "%(log_color)s%(name)s(%(filename)s:%(lineno)d) - "
                 "%(levelname)s: %(message)s"
             )
         else:
-            text = format_prefix + "%(log_color)s%(levelname)s: %(message)s"
+            console_text = format_prefix + "%(log_color)s%(levelname)s: %(message)s"
 
-        formatter = colorlog.ColoredFormatter(
-            text,
+        color_formatter = colorlog.ColoredFormatter(
+            console_text,
             datefmt=datefmt,
             log_colors={
                 "DEBUG": "reset",
@@ -90,16 +113,53 @@ class MyLogger:
             style="%",
         )
 
+        # Plain (no color) formatter for file/journal
+        if level == logging.DEBUG:
+            plain_text = (
+                format_prefix + "%(name)s(%(filename)s:%(lineno)d) - "
+                "%(levelname)s: %(message)s"
+            )
+        else:
+            plain_text = format_prefix + "%(levelname)s: %(message)s"
+        plain_formatter = logging.Formatter(plain_text, datefmt=datefmt)
+
         # Create and configure console handler
         console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
+        console_handler.setFormatter(color_formatter)
         logger.addHandler(console_handler)
 
         # Create and configure file handler
         if log_file is not None and log_file != "":
             file_handler = logging.FileHandler(log_file)
-            file_handler.setFormatter(formatter)
+            # Avoid ANSI color codes in files
+            file_handler.setFormatter(plain_formatter)
             logger.addHandler(file_handler)
+
+        # Optional: systemd journal / syslog handler
+        if log_to_journal:
+            if _HAS_JOURNAL and JournalHandler is not None:
+                j_ident = journal_identifier or logger_name
+                try:
+                    journal_handler = JournalHandler(SYSLOG_IDENTIFIER=j_ident)
+                    journal_handler.setFormatter(plain_formatter)
+                    logger.addHandler(journal_handler)
+                except Exception:
+                    # Fall back to SysLogHandler below
+                    pass
+            # If no systemd.journal or it failed: fall back to syslog
+            if not any(isinstance(h, SysLogHandler) for h in logger.handlers) and not (
+                _HAS_JOURNAL
+                and any(
+                    h.__class__.__name__ == "JournalHandler" for h in logger.handlers
+                )
+            ):
+                try:
+                    syslog_handler = SysLogHandler(address="/dev/log")
+                except Exception:
+                    # Fallback for systems without /dev/log (e.g., some containers)
+                    syslog_handler = SysLogHandler(address=("localhost", 514))
+                syslog_handler.setFormatter(plain_formatter)
+                logger.addHandler(syslog_handler)
 
         # Prevent log messages from being propagated to higher level loggers
         logger.propagate = False
