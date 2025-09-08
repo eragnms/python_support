@@ -36,6 +36,7 @@ class MyLogger:
         *,
         log_to_journal: bool = False,
         journal_identifier: str | None = None,
+        log_console: bool = True,
     ) -> None:
         """Create and configure a logger with console, optional file, and
         optional journal logging.
@@ -123,10 +124,13 @@ class MyLogger:
             plain_text = format_prefix + "%(levelname)s: %(message)s"
         plain_formatter = logging.Formatter(plain_text, datefmt=datefmt)
 
-        # Create and configure console handler
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(color_formatter)
-        logger.addHandler(console_handler)
+        # Create and configure console handler (stdout/stderr)
+        # NOTE: When running under systemd with StandardOutput=journal,
+        # this ends up in journalctl. Set log_console=False to suppress.
+        if log_console:
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(color_formatter)
+            logger.addHandler(console_handler)
 
         # Create and configure file handler
         if log_file is not None and log_file != "":
