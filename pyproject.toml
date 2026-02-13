@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python_support"
-version = "1.4.0"
+version = "1.5.0"
 description = "Reusable Python modules for various projects."
 readme = "README.md"
 license = { text = "MIT" }
@@ -18,9 +18,11 @@ classifiers = [
 ]
 dependencies = [
      "colorlog",
+     "playwright",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
 [project.scripts]
 pushover-message = "python_support.pushover_message:main"
+ui-review-capture = "python_support.ui_review_capture:main"
