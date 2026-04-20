@@ -5,14 +5,14 @@ A repository for my support python modules
 
 Install Directly from GitHub: Use the following command to install the package via pip:
 
-    pip install git+ssh://git@github.com/eragnms/python_support.git@main
+    pip install git+ssh://git@github.com/mcnabse/python_support.git@main
 
 Add to requirements.txt
 
 If you want to include python_support as a dependency in your project,
 add it to your requirements.txt file:
 
-    git+ssh://git@github.com/eragnms/python_support.git@main
+    git+ssh://git@github.com/mcnabse/python_support.git@main
 
 Add to pyproject.toml (if your project uses it)
 
@@ -21,7 +21,7 @@ the [project.dependencies] section:
 
     [project]
     dependencies = [
-        "python_support@git+https://git@github.com/eragnms/python_support.git@main"
+        "python_support@git+https://git@github.com/mcnabse/python_support.git@main"
     ]
 
 To use for example the configuration module do:
